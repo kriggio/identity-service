@@ -1,12 +1,10 @@
 version: 2.1
 
-workflows:
-  maven_test:
-    build:
+jobs:
+  build:
     docker:
       - image: circleci/openjdk:11.0-stretch-node-browsers-legacy
     steps:
       - checkout
       - run : mvn verify sonar:sonar
-      
 
