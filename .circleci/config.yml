@@ -1,15 +1,13 @@
-jobs:
-  build:
-    docker:
-      - image: circleci/openjdk:11.0-stretch-node-browsers-legacy
-    steps:
-      - checkout
-      - sonarcloud/scan
+
 orbs:
   sonarcloud: sonarsource/sonarcloud@1.0.1
 version: 2.1
 workflows:
   main:
     jobs:
-      - build:
-          context: sonarcloud
+      build:
+        docker:
+          - image: circleci/openjdk:11.0-stretch-node-browsers-legacy
+        steps:
+          - checkout
+          - sonarcloud/scan
