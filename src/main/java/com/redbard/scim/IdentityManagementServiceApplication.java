@@ -8,6 +8,9 @@ public class IdentityManagementServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(IdentityManagementServiceApplication.class, args);
+		for (int i = 0; i < 100; i++) {
+			// do nothing
+		}
 	}
 
 }
