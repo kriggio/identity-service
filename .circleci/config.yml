@@ -6,7 +6,7 @@ jobs:
       - checkout
       - sonarcloud/scan
 orbs:
-  sonarcloud: sonarsource/sonarcloud@1.0.0
+  sonarcloud: sonarsource/sonarcloud@1.0.1
 version: 2.1
 workflows:
   main:
