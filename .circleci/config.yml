@@ -1,11 +1,11 @@
 jobs:
   build:
     docker:
-      - image: 'node:latest'
+      - image: 'circleci/openjdk:stretch'
     steps:
       - checkout
-      - run: mvn package
-      - run: mvn verify sonar:sonar
+      - run: ./mvn package
+      - run: ./mvn verify sonar:sonar
 orbs:
   sonarcloud: sonarsource/sonarcloud@1.0.1
 version: 2.1
