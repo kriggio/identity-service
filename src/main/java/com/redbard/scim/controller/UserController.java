@@ -4,17 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.PagedModel.PageMetadata;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.redbard.scim.controller.assembler.UserModelAssembler;
-import com.redbard.scim.model.User;
+import com.redbard.scim.model.UserDTO;
+import com.redbard.scim.model.exception.ResourceNotFoundException;
+import com.redbard.scim.service.UserService;
 
 import lombok.Setter;
 
@@ -23,45 +32,62 @@ import lombok.Setter;
 public class UserController {
 
 	private UserModelAssembler assembler;
+	private UserService userService;
 	
-	public UserController(UserModelAssembler userModelAssembler) {
+	@Autowired
+	public UserController(UserModelAssembler userModelAssembler, UserService userService) {
 		this.assembler = userModelAssembler;
+		this.userService = userService;
 	}
 	
 	@GetMapping("/users")
-	public CollectionModel<EntityModel<User>> getAllUsers() {
-		User user = new User();
-		user.setId("1");
-		user.setNickName("RedBard");
+	public PagedModel<EntityModel<UserDTO>> getAllUsers(
+			@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+			@RequestParam(name = "size", required = false, defaultValue = "20") Integer size) {
 		
-		List<EntityModel<User>> users = new ArrayList<>();
+		List<UserDTO> userDTOs = userService.getAllUsers(page, size);
+
+		List<EntityModel<UserDTO>> users = new ArrayList<>();
 		
-		users.add(assembler.toModel(user));
-					   
-		return new CollectionModel<>(users,
-			    linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel());
+		for (UserDTO user : userDTOs) {
+			users.add(assembler.toModel(user));
+		}
+							   
+		return new PagedModel<>(users, new PageMetadata(size, page, userService.getTotalCount()),
+			    linkTo(methodOn(UserController.class).getAllUsers(page, size)).withSelfRel(),
+			    linkTo(methodOn(UserController.class).getAllUsers(page + 1, size)).withRel("next"));
 	}
 
 	@GetMapping("/users/{id}")
-	public EntityModel<User> getUserById(@PathVariable String id) {
-		User user = new User();
-		user.setId(id);
-		user.setNickName("RedBard");
+	public EntityModel<UserDTO> getUserById(@PathVariable String id) {
+		
+		UserDTO user = userService.getUserById(id);
+		
+		if (user == null) {
+			throw new ResourceNotFoundException(String.format("%s not found", id));
+		}
+		
 		return assembler.toModel(user);
 	}
 	
 	@PostMapping("/users")
-	public User createUser(@RequestBody User user) {
-		user.setId("new-user");
-		user.setNickName("RedBard");
-		return user;
+	public ResponseEntity<?> createUser(@RequestBody UserDTO user) {
+		EntityModel<UserDTO> entityModel = assembler.toModel(userService.createUser(user));
+		
+		return ResponseEntity //
+				.created(entityModel.getRequiredLink("self").toUri()) 
+				.body(entityModel);
 	}
 	
 	@PutMapping("/users/{id}")
-	public User updateUser(@PathVariable String id, @RequestBody User user) {
-		user.setId(id);
-		user.setNickName("RedBard");
-		return user;
+	public EntityModel<UserDTO> updateUser(@PathVariable String id, @RequestBody UserDTO user) {
+		
+		UserDTO user2 = userService.updateUser(id, user);
+		
+		if (user2 == null) {
+			throw new ResourceNotFoundException(String.format("%s not found", id));
+		}
+		return assembler.toModel(user2);
 	}
 		
 	

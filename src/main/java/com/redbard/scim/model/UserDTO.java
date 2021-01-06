@@ -1,9 +1,16 @@
 package com.redbard.scim.model;
 
+import org.springframework.hateoas.server.core.Relation;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import lombok.*;
 
 @Data
-public class User {
+@JsonInclude(Include.NON_NULL)
+@Relation(collectionRelation = "users", itemRelation = "user")
+public class UserDTO {
 
 	private String id;
 	private String externalId;
