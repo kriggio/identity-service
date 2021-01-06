@@ -6,9 +6,7 @@ import java.util.List;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.PagedModel.PageMetadata;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +69,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/users")
-	public ResponseEntity<?> createUser(@RequestBody UserDTO user) {
+	public ResponseEntity<EntityModel<UserDTO>> createUser(@RequestBody UserDTO user) {
 		EntityModel<UserDTO> entityModel = assembler.toModel(userService.createUser(user));
 		
 		return ResponseEntity //

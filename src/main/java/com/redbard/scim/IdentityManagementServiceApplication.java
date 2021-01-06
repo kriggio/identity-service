@@ -27,6 +27,9 @@ import springfox.documentation.swagger.web.SecurityConfigurationBuilder;
 @SpringBootApplication
 public class IdentityManagementServiceApplication {
 
+	public static final String AUTHORIZATION = "Authorization";
+	public static final String HEADER = "Header";
+	
 	public static void main(String[] args) {
 		SpringApplication.run(IdentityManagementServiceApplication.class, args);
 	}
@@ -51,7 +54,7 @@ public class IdentityManagementServiceApplication {
 		AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
 		AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
 		authorizationScopes[0] = authorizationScope;
-		return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
+		return Arrays.asList(new SecurityReference(AUTHORIZATION, authorizationScopes));
 	}
 
 	private Predicate<String> paths() {
@@ -59,7 +62,7 @@ public class IdentityManagementServiceApplication {
 	}
 
 	private ApiKey apiKey() {
-		return new ApiKey("Authorization", "Authorization", "header");
+		return new ApiKey(AUTHORIZATION, AUTHORIZATION, HEADER);
 	}
 
 	private ApiInfo apiInfo() {

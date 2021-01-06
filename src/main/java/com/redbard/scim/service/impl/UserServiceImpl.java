@@ -42,10 +42,8 @@ public class UserServiceImpl implements UserService {
 	public UserDTO createUser(UserDTO user) {
 		User userEntity =  
 		    mapper.map(user, User.class);
-		userEntity = userRepository.save(userEntity);
-		UserDTO userDTOn =  
-			    mapper.map(userEntity, UserDTO.class);
-		return userDTOn;
+		userEntity = userRepository.save(userEntity);		 
+		return mapper.map(userEntity, UserDTO.class);
 	}
 
 	@Override
@@ -81,9 +79,7 @@ public class UserServiceImpl implements UserService {
 		RBBeanUtils<User> util = new RBBeanUtils<>();
 		util.copyNonNullProperties(found, userEntity);
 		userEntity = userRepository.save(found);
-		UserDTO userDTOn =  
-			    mapper.map(userEntity, UserDTO.class);
-		return userDTOn;
+		return mapper.map(userEntity, UserDTO.class);
 	}
 
 
