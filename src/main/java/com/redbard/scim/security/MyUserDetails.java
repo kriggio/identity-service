@@ -6,28 +6,28 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.redbard.scim.model.UserDTO;
-import com.redbard.scim.service.UserService;
+import com.redbard.scim.entity.User;
+import com.redbard.scim.repository.UserRepository;
 
 
 @Service
 public class MyUserDetails implements UserDetailsService {
 
   @Autowired
-  private UserService userService;
+  private UserRepository userRepository;
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    final UserDTO user = userService.getUserById(username);
-
+    final User user = userRepository.findByUsername(username);
+    
     if (user == null) {
       throw new UsernameNotFoundException("User '" + username + "' not found");
     }
-
+    
     return org.springframework.security.core.userdetails.User//
         .withUsername(username)//
         .password(user.getPassword())//
-        //.authorities(user.getRoles())//
+        .authorities(user.getRoles())//
         .accountExpired(false)//
         .accountLocked(false)//
         .credentialsExpired(false)//

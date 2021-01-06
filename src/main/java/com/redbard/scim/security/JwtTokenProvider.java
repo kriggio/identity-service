@@ -23,7 +23,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import com.redbard.scim.model.exception.CustomException;
-import com.redbard.scim.model.Role;
+import com.redbard.scim.model.RoleDTO;
 
 @Component
 public class JwtTokenProvider {
@@ -33,7 +33,7 @@ public class JwtTokenProvider {
    * microservices environment, this key would be kept on a config-server.
    */
   @Value("${security.jwt.token.secret-key:secret-key}")
-  private String secretKey;
+  private String secretKey = "secret-key";
 
   @Value("${security.jwt.token.expire-length:3600000}")
   private long validityInMilliseconds = 3600000; // 1h
@@ -46,7 +46,7 @@ public class JwtTokenProvider {
     secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
   }
 
-  public String createToken(String username, List<Role> roles) {
+  public String createToken(String username, List<RoleDTO> roles) {
 
     Claims claims = Jwts.claims().setSubject(username);
     claims.put("auth", roles.stream().map(s -> new SimpleGrantedAuthority(s.getAuthority())).filter(Objects::nonNull).collect(Collectors.toList()));

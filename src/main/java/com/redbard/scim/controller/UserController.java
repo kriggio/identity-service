@@ -10,6 +10,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.PagedModel.PageMetadata;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import com.redbard.scim.controller.assembler.UserModelAssembler;
 import com.redbard.scim.model.UserDTO;
@@ -26,6 +33,7 @@ import com.redbard.scim.service.UserService;
 
 import lombok.Setter;
 
+@Api(tags = "users")
 @RestController
 @Setter
 public class UserController {
@@ -40,6 +48,7 @@ public class UserController {
 	}
 	
 	@Profile("UserController#getAllUsers")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
 	@GetMapping("/users")
 	public PagedModel<EntityModel<UserDTO>> getAllUsers(
 			@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
@@ -59,6 +68,7 @@ public class UserController {
 	}
 
 	@Profile("UserController#getUserById")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
 	@GetMapping("/users/{id}")
 	public EntityModel<UserDTO> getUserById(@PathVariable String id) {
 		
@@ -72,6 +82,7 @@ public class UserController {
 	}
 	
 	@Profile("UserController#createUser")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/users")
 	public ResponseEntity<EntityModel<UserDTO>> createUser(@RequestBody UserDTO user) {
 		EntityModel<UserDTO> entityModel = assembler.toModel(userService.createUser(user));
@@ -82,6 +93,7 @@ public class UserController {
 	}
 	
 	@Profile("UserController#updateUser")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
 	@PutMapping("/users/{id}")
 	public EntityModel<UserDTO> updateUser(@PathVariable String id, @RequestBody UserDTO user) {
 		
@@ -93,5 +105,14 @@ public class UserController {
 		return assembler.toModel(user2);
 	}
 		
+	@PostMapping("/users/signup")
+	  @ApiOperation(value = "${UserController.signup}")
+	  @ApiResponses(value = {//
+	      @ApiResponse(code = 400, message = "Something went wrong"), //
+	      @ApiResponse(code = 403, message = "Access denied"), //
+	      @ApiResponse(code = 422, message = "Username is already in use")})
+	  public ResponseEntity<EntityModel<UserDTO>> signup(@ApiParam("Signup User") @RequestBody UserDTO user) {
+	    return this.createUser(user);
+	  }
 	
 }

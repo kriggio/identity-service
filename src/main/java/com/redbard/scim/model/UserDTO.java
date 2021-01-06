@@ -1,5 +1,7 @@
 package com.redbard.scim.model;
 
+import java.util.List;
+
 import org.springframework.hateoas.server.core.Relation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,7 +16,7 @@ public class UserDTO {
 
 	private String id;
 	private String externalId;
-	private String userName;
+	private String username;
 	private String displayName;
 	private String nickName;
 	private String profileUrl;
@@ -25,5 +27,7 @@ public class UserDTO {
 	private String timezone;
 	private Boolean active;
 	private String password;
+	private String jwtToken;
+	private List<RoleDTO> roles;
 
 }

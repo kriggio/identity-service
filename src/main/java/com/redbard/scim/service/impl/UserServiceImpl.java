@@ -9,7 +9,9 @@ import java.util.Optional;
 
 import com.redbard.scim.entity.User;
 import com.redbard.scim.model.UserDTO;
+import com.redbard.scim.model.exception.CustomException;
 import com.redbard.scim.repository.UserRepository;
+import com.redbard.scim.security.JwtTokenProvider;
 import com.redbard.scim.service.UserService;
 import com.redbard.util.RBBeanUtils;
 
@@ -19,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,23 +32,41 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserServiceImpl implements UserService {
-	
+
 	private UserRepository userRepository;
 	private Mapper mapper;
-	
+	private JwtTokenProvider jwtTokenProvider;
+
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository) {
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private AuthenticationManager authenticationManager;
+
+	@Autowired
+	public UserServiceImpl(UserRepository userRepository, JwtTokenProvider jwtTokenProvider,
+			PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
 		this.userRepository = userRepository;
 		this.mapper = new DozerBeanMapper();
+		this.jwtTokenProvider = jwtTokenProvider;
+		this.passwordEncoder = passwordEncoder;
+		this.authenticationManager = authenticationManager;
 	}
-	
-	
+
 	@Override
 	public UserDTO createUser(UserDTO user) {
-		User userEntity =  
-		    mapper.map(user, User.class);
-		userEntity = userRepository.save(userEntity);		 
-		return mapper.map(userEntity, UserDTO.class);
+
+		if (userRepository.existsByUsername(user.getUsername())) {
+			throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+		User userEntity = mapper.map(user, User.class);
+		userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+		userEntity = userRepository.save(userEntity);
+		UserDTO newUser = mapper.map(userEntity, UserDTO.class);
+		
+		newUser.setJwtToken(jwtTokenProvider.createToken(newUser.getUsername(), newUser.getRoles()));
+		
+		return newUser;
 	}
 
 	@Override
@@ -52,7 +75,7 @@ public class UserServiceImpl implements UserService {
 		Page<User> usersPage = userRepository.findAll(pageable);
 		final List<UserDTO> users = new ArrayList<>();
 		for (User s : usersPage) {
-		    users.add(mapper.map(s, UserDTO.class));
+			users.add(mapper.map(s, UserDTO.class));
 		}
 		return users;
 	}
@@ -74,14 +97,12 @@ public class UserServiceImpl implements UserService {
 			return null;
 		}
 		User found = userEntityOp.get();
-		User userEntity =  
-		mapper.map(user, User.class);
+		User userEntity = mapper.map(user, User.class);
 		RBBeanUtils<User> util = new RBBeanUtils<>();
 		util.copyNonNullProperties(found, userEntity);
 		userEntity = userRepository.save(found);
 		return mapper.map(userEntity, UserDTO.class);
 	}
-
 
 	@Override
 	public Long getTotalCount() {
