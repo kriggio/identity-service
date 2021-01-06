@@ -1,16 +1,17 @@
+version: 2.1
+
 jobs:
   build:
     docker:
-      - image: 'circleci/openjdk:stretch'
+      - image: 'circleci/openjdk:11-jdk'
     steps:
       - checkout
-      - run: ./mvn package
-      - run: ./mvn verify sonar:sonar
-orbs:
-  sonarcloud: sonarsource/sonarcloud@1.0.1
-version: 2.1
+      - run:
+          name: Analyze on SonarCloud
+          command: mvn verify sonar:sonar
+
 workflows:
   main:
     jobs:
       - build:
-          context: sonarcloud
+          context: SonarCloud
