@@ -1,12 +1,15 @@
-version: 2.1
-
-workflows:
-  maven_test:
-    build:
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:11.0-stretch-node-browsers-legacy
+      - image: 'node:latest'
     steps:
       - checkout
-      - run : mvn verify sonar:sonar
+      - sonarcloud/scan
+orbs:
+  sonarcloud: sonarsource/sonarcloud@1.0.1
+version: 2.1
+workflows:
+  main:
+    jobs:
+      - build:
+          context: sonarcloud
