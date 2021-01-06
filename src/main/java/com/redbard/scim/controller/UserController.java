@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.redbard.scim.controller.assembler.UserModelAssembler;
 import com.redbard.scim.model.UserDTO;
 import com.redbard.scim.model.exception.ResourceNotFoundException;
+import com.redbard.scim.profiler.Profile;
 import com.redbard.scim.service.UserService;
 
 import lombok.Setter;
@@ -38,6 +39,7 @@ public class UserController {
 		this.userService = userService;
 	}
 	
+	@Profile("UserController#getAllUsers")
 	@GetMapping("/users")
 	public PagedModel<EntityModel<UserDTO>> getAllUsers(
 			@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
@@ -56,6 +58,7 @@ public class UserController {
 			    linkTo(methodOn(UserController.class).getAllUsers(page + 1, size)).withRel("next"));
 	}
 
+	@Profile("UserController#getUserById")
 	@GetMapping("/users/{id}")
 	public EntityModel<UserDTO> getUserById(@PathVariable String id) {
 		
@@ -68,6 +71,7 @@ public class UserController {
 		return assembler.toModel(user);
 	}
 	
+	@Profile("UserController#createUser")
 	@PostMapping("/users")
 	public ResponseEntity<EntityModel<UserDTO>> createUser(@RequestBody UserDTO user) {
 		EntityModel<UserDTO> entityModel = assembler.toModel(userService.createUser(user));
@@ -77,6 +81,7 @@ public class UserController {
 				.body(entityModel);
 	}
 	
+	@Profile("UserController#updateUser")
 	@PutMapping("/users/{id}")
 	public EntityModel<UserDTO> updateUser(@PathVariable String id, @RequestBody UserDTO user) {
 		
