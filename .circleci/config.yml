@@ -7,9 +7,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Perform an Build with Tests
+          command: mvn package
+      - run:
           name: Analyze on SonarCloud
           command: mvn verify sonar:sonar
-
 workflows:
   main:
     jobs:
