@@ -1,4 +1,4 @@
-# scim-service
-SCIM Service Using Spring and SpringBoot
+# identity-service
+Identity Service Using Spring and SpringBoot
 
 Yummy
