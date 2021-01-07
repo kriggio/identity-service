@@ -1,6 +1,7 @@
 package com.redbard.scim.model;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.hateoas.server.core.Relation;
 
@@ -28,6 +29,7 @@ public class UserDTO {
 	private Boolean active;
 	private String password;
 	private String jwtToken;
-	private List<RoleDTO> roles;
+	private Set<RoleDTO> roles;
+	private Set<EmailDTO> emails;
 
 }

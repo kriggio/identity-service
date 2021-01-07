@@ -2,6 +2,7 @@ package com.redbard.scim.entity;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -9,12 +10,15 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import lombok.*;
 
@@ -27,7 +31,7 @@ public class User {
 	@Id
 	@GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "user_id", columnDefinition = "VARCHAR(255)")
+    @Column(name = "id", columnDefinition = "VARCHAR(255)")
 	private String id;
 	@Version
 	private Integer version;
@@ -50,7 +54,9 @@ public class User {
 	private Date modifiedOn;
 	private Date deletedOn;
 	@ElementCollection(fetch = FetchType.EAGER)
-	private List<Role> roles;
+	private Set<Role> roles;
+	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+	private Set<Email> emails;
 	
 	
 }
