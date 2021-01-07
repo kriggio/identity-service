@@ -7,7 +7,7 @@ import org.springframework.hateoas.server.core.Relation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import lombok.*;
+import lombok.Data;
 
 @Data
 @JsonInclude(Include.NON_NULL)
@@ -30,5 +30,9 @@ public class UserDTO {
 	private String jwtToken;
 	private Set<RoleDTO> roles;
 	private Set<EmailDTO> emails;
+	private Set<AddressDTO> addresses;
+	private Set<PhoneNumberDTO> phoneNumbers;
+	private Set<SocialLinkDTO> socialLinks;
+	private NameDTO name;
 
 }

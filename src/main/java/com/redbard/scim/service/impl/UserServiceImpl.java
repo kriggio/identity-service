@@ -7,14 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.redbard.scim.entity.User;
-import com.redbard.scim.model.UserDTO;
-import com.redbard.scim.model.exception.CustomException;
-import com.redbard.scim.repository.UserRepository;
-import com.redbard.scim.security.JwtTokenProvider;
-import com.redbard.scim.service.UserService;
-import com.redbard.util.RBBeanUtils;
-
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +17,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.redbard.scim.entity.User;
+import com.redbard.scim.model.UserDTO;
+import com.redbard.scim.model.exception.CustomException;
+import com.redbard.scim.repository.UserRepository;
+import com.redbard.scim.security.JwtTokenProvider;
+import com.redbard.scim.service.UserService;
+import com.redbard.util.RBBeanUtils;
 
 /**
  * @author kriggio

@@ -1,10 +1,10 @@
 package com.redbard.util;
 
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-
 import java.lang.reflect.Field;
 import java.util.Collection;
+
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 
 public class RBBeanUtils<T> {
     public T copyNonNullProperties(T target, T in) {

@@ -18,12 +18,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.redbard.scim.model.RoleDTO;
+import com.redbard.scim.model.exception.CustomException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import com.redbard.scim.model.exception.CustomException;
-import com.redbard.scim.model.RoleDTO;
 
 @Component
 public class JwtTokenProvider {
