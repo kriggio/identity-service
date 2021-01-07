@@ -1,10 +1,5 @@
 package com.redbard.scim.model;
 
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Version;
-
 import org.springframework.hateoas.server.core.Relation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;

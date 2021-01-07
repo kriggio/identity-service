@@ -1,6 +1,5 @@
 package com.redbard.scim.model;
 
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.hateoas.server.core.Relation;

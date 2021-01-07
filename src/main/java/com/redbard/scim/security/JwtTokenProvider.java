@@ -2,7 +2,6 @@ package com.redbard.scim.security;
 
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
