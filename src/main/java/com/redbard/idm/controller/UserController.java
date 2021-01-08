@@ -12,6 +12,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.PagedModel.PageMetadata;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,7 @@ import lombok.Setter;
 @Api(tags = "users")
 @RestController
 @Setter
+@CrossOrigin
 public class UserController {
 
 	private UserModelAssembler assembler;
@@ -51,6 +53,7 @@ public class UserController {
 	@Profile("UserController#getAllUsers")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/users")
+	@CrossOrigin
 	public PagedModel<EntityModel<UserDTO>> getAllUsers(
 			@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
 			@RequestParam(name = "size", required = false, defaultValue = "20") Integer size) {
@@ -71,6 +74,7 @@ public class UserController {
 	@Profile("UserController#getUserById")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
 	@GetMapping("/users/{id}")
+	@CrossOrigin
 	public EntityModel<UserDTO> getUserById(@PathVariable String id) {
 
 		UserDTO user = userService.getUserById(id);
@@ -85,6 +89,7 @@ public class UserController {
 	@Profile("UserController#createUser")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/users")
+	@CrossOrigin
 	public ResponseEntity<EntityModel<UserDTO>> createUser(@RequestBody UserDTO user) {
 		EntityModel<UserDTO> entityModel = assembler.toModel(userService.createUser(user));
 
@@ -95,6 +100,7 @@ public class UserController {
 	@Profile("UserController#updateUser")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
 	@PutMapping("/users/{id}")
+	@CrossOrigin
 	public EntityModel<UserDTO> updateUser(@PathVariable String id, @RequestBody UserDTO user) {
 
 		UserDTO user2 = userService.updateUser(id, user);
@@ -112,6 +118,7 @@ public class UserController {
 			@ApiResponse(code = 400, message = "Bad request"), //
 			@ApiResponse(code = 403, message = "Access denied"), //
 			@ApiResponse(code = 422, message = "Username is already in use") })
+	@CrossOrigin
 	public ResponseEntity<EntityModel<UserDTO>> signup(@ApiParam("Signup User") @RequestBody UserDTO user) {
 		return this.createUser(user);
 	}
@@ -122,6 +129,7 @@ public class UserController {
 	@ApiResponses(value = { //
 			@ApiResponse(code = 400, message = "Bad request"), //
 			@ApiResponse(code = 403, message = "Access denied")})//
+	@CrossOrigin
 	public EntityModel<UserDTO> signup(@ApiParam("Auth Request") @RequestBody AuthRequestDTO authRequest) {
 		return assembler.toModel(userService.authenticateUser(authRequest.getUsername(), authRequest.getPassword()));
 	}
