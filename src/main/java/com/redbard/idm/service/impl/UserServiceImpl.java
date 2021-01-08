@@ -15,10 +15,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.redbard.idm.entity.User;
+import com.redbard.idm.entity.projection.UserNamesOnly;
 import com.redbard.idm.model.UserDTO;
 import com.redbard.idm.model.exception.CustomException;
 import com.redbard.idm.repository.UserRepository;
@@ -26,10 +29,13 @@ import com.redbard.idm.security.JwtTokenProvider;
 import com.redbard.idm.service.UserService;
 import com.redbard.util.RBBeanUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author kriggio
  *
  */
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -63,9 +69,9 @@ public class UserServiceImpl implements UserService {
 		userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
 		userEntity = userRepository.save(userEntity);
 		UserDTO newUser = mapper.map(userEntity, UserDTO.class);
-		
+
 		newUser.setJwtToken(jwtTokenProvider.createToken(newUser.getUsername(), newUser.getRoles()));
-		
+
 		return newUser;
 	}
 
@@ -107,6 +113,20 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Long getTotalCount() {
 		return userRepository.count();
+	}
+
+	@Override
+	public UserDTO authenticateUser(String username, String password) {
+		try {
+			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+			User user = userRepository.findByUsername(username);
+			log.error(user.toString());
+			UserDTO userDTO = mapper.map(user, UserDTO.class);
+			userDTO.setJwtToken(jwtTokenProvider.createToken(username, userDTO.getRoles()));
+			return userDTO;
+		} catch (AuthenticationException e) {
+			throw new CustomException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
+		}
 	}
 
 }

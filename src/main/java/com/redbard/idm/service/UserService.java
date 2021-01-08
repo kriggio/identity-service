@@ -10,4 +10,5 @@ public interface UserService {
 	UserDTO getUserById(String id);
 	UserDTO updateUser(String id, UserDTO user);
 	Long getTotalCount();
+	UserDTO authenticateUser(String username, String password);
 }

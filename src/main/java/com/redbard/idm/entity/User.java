@@ -43,9 +43,9 @@ public class User extends BaseEntity {
 	private Set<Email> emails;
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<Address> addresses;
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.LAZY)
 	private Set<PhoneNumber> phoneNumbers;
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.LAZY)
 	private Set<SocialLink> socialLinks;
 	
 	

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.redbard.idm.controller.assembler.UserModelAssembler;
+import com.redbard.idm.model.AuthRequestDTO;
 import com.redbard.idm.model.UserDTO;
 import com.redbard.idm.model.exception.ResourceNotFoundException;
 import com.redbard.idm.profiler.Profile;
@@ -48,7 +49,7 @@ public class UserController {
 	}
 
 	@Profile("UserController#getAllUsers")
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CLIENT')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/users")
 	public PagedModel<EntityModel<UserDTO>> getAllUsers(
 			@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
@@ -113,6 +114,16 @@ public class UserController {
 			@ApiResponse(code = 422, message = "Username is already in use") })
 	public ResponseEntity<EntityModel<UserDTO>> signup(@ApiParam("Signup User") @RequestBody UserDTO user) {
 		return this.createUser(user);
+	}
+	
+	@Profile("UserController#signup")
+	@PostMapping("/users/signin")
+	@ApiOperation(value = "Sign In")
+	@ApiResponses(value = { //
+			@ApiResponse(code = 400, message = "Bad request"), //
+			@ApiResponse(code = 403, message = "Access denied")})//
+	public EntityModel<UserDTO> signup(@ApiParam("Auth Request") @RequestBody AuthRequestDTO authRequest) {
+		return assembler.toModel(userService.authenticateUser(authRequest.getUsername(), authRequest.getPassword()));
 	}
 
 }

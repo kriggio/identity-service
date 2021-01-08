@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @JsonInclude(Include.NON_NULL)
-@Relation(collectionRelation = "authentications", itemRelation = "authentication")
-public class AuthDTO {
+@Relation(collectionRelation = "authResponses", itemRelation = "authResponse")
+public class AuthResponseDTO {
 	private String jwtToken;
 }
